@@ -56,8 +56,10 @@ export function Footer() {
           <p className="text-xs text-gray-600">
             &copy; {new Date().getFullYear()} Chamidu Herath ICT. All rights reserved.
           </p>
-          <p className="text-xs text-gray-600 flex items-center gap-1">
-            Made with <Heart className="h-3 w-3 text-red-500" fill="currentColor" /> in Sri Lanka
+          <p className="text-xs text-gray-600">
+            <a href="https://www.chamidu.me" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-white transition-colors">
+              Made with <Heart className="h-3 w-3 text-red-500" fill="currentColor" /> in Sri Lanka
+            </a>
           </p>
         </div>
       </div>
