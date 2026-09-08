@@ -5,7 +5,7 @@ import { Shield, Lock, Eye, AlertTriangle, Mail } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "Privacy Policy for Chamidu Herath ICT Giveaway Platform — how we collect, store, and protect your data.",
+  description: "Privacy Policy for Chamidu Herath Giveaway Platform — how we collect, store, and protect your data.",
 };
 
 function Section({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
@@ -43,7 +43,7 @@ export default function PrivacyPage() {
                 This giveaway is in no way sponsored, endorsed, administered by, or associated with YouTube LLC.
                 By entering any giveaway on this platform, participants acknowledge that YouTube is completely
                 released from all liability related to this contest. All giveaways are independently organized
-                by Chamidu Herath ICT.
+                by Chamidu Herath.
               </p>
             </div>
           </div>

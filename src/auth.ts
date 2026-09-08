@@ -12,6 +12,14 @@ import { z } from "zod";
  * no email login. This is by design for maximum security.
  */
 
+import crypto from "crypto";
+
+function safeCompare(a: string, b: string): boolean {
+  const hashA = crypto.createHash("sha256").update(a).digest();
+  const hashB = crypto.createHash("sha256").update(b).digest();
+  return crypto.timingSafeEqual(hashA, hashB);
+}
+
 const loginSchema = z.object({
   username: z.string().min(1).max(64),
   password: z.string().min(1).max(128),
@@ -42,7 +50,7 @@ export const authConfig: NextAuthConfig = {
         }
 
         // 3. Constant-time username comparison (prevent timing attacks)
-        const usernameMatch = username === adminUsername;
+        const usernameMatch = safeCompare(username, adminUsername);
 
         // 4. Always run bcrypt compare (even if username is wrong) to prevent
         //    timing attacks that could reveal whether the username is correct

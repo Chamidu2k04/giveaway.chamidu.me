@@ -11,7 +11,7 @@ export function Navbar() {
             <Youtube className="h-5 w-5 text-white" />
           </div>
           <div className="leading-tight">
-            <p className="text-sm font-bold text-white">Chamidu Herath ICT</p>
+            <p className="text-sm font-bold text-white">Chamidu Herath</p>
             <p className="text-xs text-gray-400">Giveaway Platform</p>
           </div>
         </Link>

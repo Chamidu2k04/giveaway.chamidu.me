@@ -64,7 +64,7 @@ function LoginForm() {
             <Shield className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-2xl font-black text-white">Admin Access</h1>
-          <p className="text-sm text-gray-400">Chamidu Herath ICT Giveaway Platform</p>
+          <p className="text-sm text-gray-400">Chamidu Herath Giveaway Platform</p>
         </div>
 
         {/* Form */}

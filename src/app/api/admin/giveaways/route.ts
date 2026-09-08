@@ -32,9 +32,13 @@ export async function GET() {
     await connectDB();
     const giveaways = await Giveaway.find({}).sort({ createdAt: -1 }).lean();
 
-    // Get participant counts for all giveaways
+    // Get participant counts for all giveaways (fallback if not stored)
     const counts = await Promise.all(
-      giveaways.map((g) => Participant.countDocuments({ giveawayId: g._id }))
+      giveaways.map((g) =>
+        typeof g.participantCount === "number"
+          ? Promise.resolve(g.participantCount)
+          : Participant.countDocuments({ giveawayId: g._id })
+      )
     );
 
     const result = giveaways.map((g, i) => ({

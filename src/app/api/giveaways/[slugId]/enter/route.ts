@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { connectDB } from "@/lib/mongoose";
+import { Types } from "mongoose";
 import Giveaway from "@/models/Giveaway";
 import Participant from "@/models/Participant";
-import { entryRatelimit } from "@/lib/ratelimit";
+import { checkEntryRateLimit } from "@/lib/ratelimit";
 import { normalizePhone } from "@/lib/utils";
 
 const entrySchema = z.object({
@@ -23,33 +24,24 @@ const entrySchema = z.object({
     .regex(/^@?[\w.-]+$/, 'Invalid YouTube username format'),
 });
 
+// Short-lived in-memory cache to reduce read pressure on MongoDB during 10k spikes
+const giveawayMetaCache = new Map<
+  string,
+  {
+    _id: Types.ObjectId;
+    status: string;
+    maxParticipants?: number;
+    participantCount: number;
+    cachedAt: number;
+  }
+>();
+
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ slugId: string }> }
 ) {
   try {
-    // 1. Rate limiting by IP
-    const ip =
-      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-      req.headers.get('x-real-ip') ||
-      '127.0.0.1';
-
-    const { success, limit, remaining, reset } = await entryRatelimit.limit(ip);
-    if (!success) {
-      return NextResponse.json(
-        { error: 'Too many attempts. Please try again later.' },
-        {
-          status: 429,
-          headers: {
-            'X-RateLimit-Limit': limit.toString(),
-            'X-RateLimit-Remaining': remaining.toString(),
-            'X-RateLimit-Reset': reset.toString(),
-          },
-        }
-      );
-    }
-
-    // 2. Parse and validate body
+    // 1. Parse and validate body FIRST (Reject malformed requests with 0 DB/Redis cost)
     let body: unknown;
     try {
       body = await req.json();
@@ -67,7 +59,7 @@ export async function POST(
 
     const { fullName, phone, youtubeUsername } = validation.data;
 
-    // 3. Normalize phone number
+    // 2. Normalize and validate phone number before any remote I/O
     const normalizedPhone = normalizePhone(phone);
     if (!normalizedPhone) {
       return NextResponse.json(
@@ -76,30 +68,71 @@ export async function POST(
       );
     }
 
+    // 3. Resilient Rate limiting (Upstash Redis + in-memory fallback for high spikes)
+    const ip =
+      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      req.headers.get('x-real-ip') ||
+      '127.0.0.1';
+
+    const { success, limit, remaining, reset } = await checkEntryRateLimit(ip);
+    if (!success) {
+      return NextResponse.json(
+        { error: 'Too many attempts. Please try again later.' },
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': limit.toString(),
+            'X-RateLimit-Remaining': remaining.toString(),
+            'X-RateLimit-Reset': reset.toString(),
+          },
+        }
+      );
+    }
+
     const { slugId } = await params;
+    if (!slugId || typeof slugId !== 'string') {
+      return NextResponse.json({ error: 'Invalid giveaway slug' }, { status: 400 });
+    }
+
     await connectDB();
 
-    // 4. Verify giveaway exists and is ACTIVE
-    const giveaway = await Giveaway.findOne({ slugId });
-    if (!giveaway) {
-      return NextResponse.json({ error: 'Giveaway not found' }, { status: 404 });
+    // 4. Verify giveaway exists and is ACTIVE (with 5-second in-memory cache)
+    const now = Date.now();
+    let meta = giveawayMetaCache.get(slugId);
+
+    if (!meta || now - meta.cachedAt > 5000) {
+      const giveaway = await Giveaway.findOne(
+        { slugId },
+        { _id: 1, status: 1, maxParticipants: 1, participantCount: 1 }
+      ).lean();
+
+      if (!giveaway) {
+        return NextResponse.json({ error: 'Giveaway not found' }, { status: 404 });
+      }
+
+      meta = {
+        _id: giveaway._id as Types.ObjectId,
+        status: giveaway.status,
+        maxParticipants: giveaway.maxParticipants,
+        participantCount: giveaway.participantCount ?? 0,
+        cachedAt: now,
+      };
+      giveawayMetaCache.set(slugId, meta);
     }
-    if (giveaway.status !== 'ACTIVE') {
+
+    if (meta.status !== 'ACTIVE') {
       return NextResponse.json(
         { error: 'This giveaway is not currently accepting entries.' },
         { status: 403 }
       );
     }
 
-    // 5. Check participant cap
-    if (giveaway.maxParticipants) {
-      const count = await Participant.countDocuments({ giveawayId: giveaway._id });
-      if (count >= giveaway.maxParticipants) {
-        return NextResponse.json(
-          { error: 'This giveaway has reached its maximum number of participants.' },
-          { status: 403 }
-        );
-      }
+    // 5. Check participant cap (O(1) counter lookup instead of slow countDocuments query)
+    if (meta.maxParticipants && meta.participantCount >= meta.maxParticipants) {
+      return NextResponse.json(
+        { error: 'This giveaway has reached its maximum number of participants.' },
+        { status: 403 }
+      );
     }
 
     // 6. Normalize YouTube username (strip leading @)
@@ -107,13 +140,20 @@ export async function POST(
       ? youtubeUsername.slice(1)
       : youtubeUsername;
 
-    // 7. Create participant (compound unique indexes enforce no duplicates at DB level)
-    const participant = await Participant.create({
-      giveawayId: giveaway._id,
+    // 7. Create participant (Compound unique indexes guarantee no duplicates at DB level)
+    const participant = (await Participant.create({
+      giveawayId: meta._id,
       fullName: fullName.trim(),
       phone: normalizedPhone,
       youtubeUsername: cleanYoutubeUsername.toLowerCase(),
-    });
+    })) as { _id: Types.ObjectId };
+
+    // 8. Atomically increment participant counter on Giveaway
+    await Giveaway.updateOne(
+      { _id: meta._id },
+      { $inc: { participantCount: 1 } }
+    );
+    meta.participantCount += 1;
 
     return NextResponse.json(
       { success: true, participantId: participant._id.toString() },

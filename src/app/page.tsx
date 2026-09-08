@@ -1,7 +1,6 @@
-import { Suspense } from "react";
 import Link from "next/link";
 import { Youtube } from "@/components/YoutubeIcon";
-import { Gift, Trophy, Clock, ChevronRight, Zap } from "lucide-react";
+import { Gift, Trophy, Clock, Zap } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { GiveawayCard } from "@/components/GiveawayCard";
@@ -25,12 +24,20 @@ async function getGiveawayData() {
       Giveaway.find({ status: "COMPLETED" }).sort({ updatedAt: -1 }).limit(12).lean(),
     ]);
 
-    const allIds = [...active, ...upcoming, ...completed].map((g) => g._id);
-    const counts = await Participant.aggregate([
-      { $match: { giveawayId: { $in: allIds } } },
-      { $group: { _id: "$giveawayId", count: { $sum: 1 } } },
-    ]);
-    const countMap = Object.fromEntries(counts.map((c: { _id: { toString(): string }; count: number }) => [c._id.toString(), c.count]));
+    const uncountedIds = [...active, ...upcoming, ...completed]
+      .filter((g) => typeof g.participantCount !== "number")
+      .map((g) => g._id);
+
+    let countMap: Record<string, number> = {};
+    if (uncountedIds.length > 0) {
+      const counts = await Participant.aggregate([
+        { $match: { giveawayId: { $in: uncountedIds } } },
+        { $group: { _id: "$giveawayId", count: { $sum: 1 } } },
+      ]);
+      countMap = Object.fromEntries(
+        counts.map((c: { _id: { toString(): string }; count: number }) => [c._id.toString(), c.count])
+      );
+    }
 
     return { active, upcoming, completed, countMap };
   } catch (error) {
@@ -68,17 +75,17 @@ export default async function HomePage() {
           {/* Channel badge */}
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm text-red-300">
             <Zap className="h-3.5 w-3.5 text-red-400" />
-            Sri Lanka&apos;s #1 ICT Education Channel
+            Tech Gadgets & Reviews
           </div>
 
           <h1 className="font-outfit text-4xl font-black tracking-tight text-white sm:text-6xl">
-            Chamidu Herath ICT
+            Chamidu Herath
             <span className="block text-gradient mt-1">Giveaways</span>
           </h1>
 
           <p className="mt-6 text-base text-gray-400 sm:text-lg max-w-2xl mx-auto leading-relaxed">
-            Win amazing prizes from Sri Lanka&apos;s trusted ICT education YouTube channel.
-            Enter our giveaways, support the channel, and be part of our growing community!
+            Win amazing tech prizes from Sri Lanka&apos;s premier tech gadgets and review YouTube channel.
+            Enter our giveaways, check out the latest tech reviews, and be part of our community!
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -135,7 +142,7 @@ export default async function HomePage() {
                   title={g.title}
                   thumbnailUrl={g.thumbnailUrl}
                   status="ACTIVE"
-                  participantCount={countMap[g._id.toString()] || 0}
+                  participantCount={g.participantCount ?? countMap[g._id.toString()] ?? 0}
                   maxParticipants={g.maxParticipants}
                 />
               ))}
@@ -173,7 +180,7 @@ export default async function HomePage() {
                   title={g.title}
                   thumbnailUrl={g.thumbnailUrl}
                   status="COMPLETED"
-                  participantCount={countMap[g._id.toString()] || 0}
+                  participantCount={g.participantCount ?? countMap[g._id.toString()] ?? 0}
                   winners={g.winners}
                 />
               ))}

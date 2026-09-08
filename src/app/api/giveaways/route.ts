@@ -12,7 +12,14 @@ export async function GET() {
       Giveaway.find({ status: 'COMPLETED' }).sort({ updatedAt: -1 }).limit(20).lean(),
     ]);
 
-    return NextResponse.json({ active, upcoming, completed });
+    return NextResponse.json(
+      { active, upcoming, completed },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=30, stale-while-revalidate=59",
+        },
+      }
+    );
   } catch (error) {
     console.error('[GET /api/giveaways]', error);
     return NextResponse.json({ error: 'Failed to fetch giveaways' }, { status: 500 });

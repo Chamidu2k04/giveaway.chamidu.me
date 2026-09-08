@@ -21,8 +21,24 @@ async function getGiveaway(slugId: string) {
   await connectDB();
   const giveaway = await Giveaway.findOne({ slugId }).lean();
   if (!giveaway) return null;
-  const participantCount = await Participant.countDocuments({ giveawayId: giveaway._id });
+  const participantCount =
+    typeof giveaway.participantCount === "number"
+      ? giveaway.participantCount
+      : await Participant.countDocuments({ giveawayId: giveaway._id });
   return { ...giveaway, participantCount };
+}
+
+export async function generateStaticParams() {
+  try {
+    await connectDB();
+    const giveaways = await Giveaway.find(
+      { status: { $in: ["ACTIVE", "UPCOMING"] } },
+      { slugId: 1 }
+    ).lean();
+    return giveaways.map((g) => ({ slugId: g.slugId }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -32,9 +48,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: giveaway.title,
-    description: `Enter the ${giveaway.title} giveaway by Chamidu Herath ICT. Open to all Sri Lankan viewers!`,
+    description: `Enter the ${giveaway.title} giveaway by Chamidu Herath. Open to all Sri Lankan viewers!`,
     openGraph: {
-      title: `${giveaway.title} | Chamidu Herath ICT Giveaway`,
+      title: `${giveaway.title} | Chamidu Herath Giveaway`,
       description: `Enter the ${giveaway.title} giveaway and win amazing prizes!`,
       images: [
         {
@@ -48,7 +64,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${giveaway.title} | Chamidu Herath ICT Giveaway`,
+      title: `${giveaway.title} | Chamidu Herath Giveaway`,
       description: `Enter the ${giveaway.title} giveaway!`,
       images: [giveaway.thumbnailUrl],
     },
@@ -56,7 +72,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const rules = [
-  "Must be subscribed to the Chamidu Herath ICT YouTube channel",
+  "Must be subscribed to the Chamidu Herath YouTube channel",
   "One entry per person per giveaway (verified by phone & YouTube handle)",
   "Must provide a valid Sri Lankan WhatsApp number",
   "Winners will be announced on the YouTube channel",
