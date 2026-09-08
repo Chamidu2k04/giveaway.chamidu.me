@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -44,8 +44,7 @@ export default function AdminGiveawayDetailPage() {
   const [copied, setCopied] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  const fetchData = async () => {
-    setLoading(true);
+  const fetchData = useCallback(async () => {
     try {
       const [gRes, pRes] = await Promise.all([
         fetch(`/api/giveaways/${slugId}`),
@@ -58,9 +57,11 @@ export default function AdminGiveawayDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [slugId]);
 
-  useEffect(() => { fetchData(); }, [slugId]);
+  useEffect(() => {
+    void fetchData();
+  }, [fetchData]);
 
   const updateStatus = async (status: string) => {
     setUpdatingStatus(true);

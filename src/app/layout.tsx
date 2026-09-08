@@ -20,33 +20,33 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://giveaway.chamidu.me"),
   title: {
-    default: "Chamidu Herath ICT Giveaways",
-    template: "%s | Chamidu Herath ICT Giveaways",
+    default: "Chamidu Herath Giveaways",
+    template: "%s | Chamidu Herath Giveaways",
   },
   description:
-    "Enter exclusive giveaways by Chamidu Herath ICT — Sri Lanka's trusted ICT education YouTube channel. Win prizes, support education!",
-  keywords: ["giveaway", "chamidu herath", "ict", "sri lanka", "youtube", "competition", "prize"],
+    "Enter exclusive giveaways by Chamidu Herath — Sri Lanka's leading tech gadget and review YouTube channel. Win the latest tech prizes!",
+  keywords: ["giveaway", "chamidu herath", "tech", "gadgets", "reviews", "sri lanka", "youtube", "competition", "prize"],
   authors: [{ name: "Chamidu Herath" }],
-  creator: "Chamidu Herath ICT",
+  creator: "Chamidu Herath",
   openGraph: {
     type: "website",
     locale: "en_LK",
-    siteName: "Chamidu Herath ICT Giveaways",
-    title: "Chamidu Herath ICT Giveaways",
-    description: "Enter exclusive giveaways from Sri Lanka's trusted ICT education channel.",
+    siteName: "Chamidu Herath Giveaways",
+    title: "Chamidu Herath Giveaways",
+    description: "Enter exclusive giveaways for the latest tech gadgets and gear from Chamidu Herath.",
     images: [
       {
         url: "/og-default.png",
         width: 1200,
         height: 630,
-        alt: "Chamidu Herath ICT Giveaways",
+        alt: "Chamidu Herath Giveaways",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Chamidu Herath ICT Giveaways",
-    description: "Enter exclusive giveaways from Sri Lanka's trusted ICT education channel.",
+    title: "Chamidu Herath Giveaways",
+    description: "Enter exclusive giveaways for the latest tech gadgets and gear from Chamidu Herath.",
   },
   robots: { index: true, follow: true },
 };

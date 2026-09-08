@@ -123,7 +123,9 @@ export function WinnerSlotMachine({
     if (stage !== "revealing") return;
 
     let count = 3;
-    setCountdown(count);
+    const initTimer = setTimeout(() => {
+      setCountdown(count);
+    }, 0);
 
     const cd = setInterval(() => {
       count--;
@@ -154,7 +156,10 @@ export function WinnerSlotMachine({
       }
     }, 1000);
 
-    return () => clearInterval(cd);
+    return () => {
+      clearTimeout(initTimer);
+      clearInterval(cd);
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage, currentRevealRank]);
 

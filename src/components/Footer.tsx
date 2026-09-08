@@ -13,10 +13,10 @@ export function Footer() {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500">
                 <Youtube className="h-4 w-4 text-white" />
               </div>
-              <span className="font-bold text-white text-sm">Chamidu Herath ICT</span>
+              <span className="font-bold text-white text-sm">Chamidu Herath</span>
             </div>
             <p className="text-xs text-gray-500 leading-relaxed">
-              Sri Lanka&apos;s trusted ICT education channel. Empowering students through technology.
+              Sri Lanka&apos;s premier YouTube channel for tech gadgets and reviews. Bringing you the latest tech, unboxings, and giveaways.
             </p>
           </div>
 
@@ -54,7 +54,7 @@ export function Footer() {
 
         <div className="mt-8 border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-gray-600">
-            &copy; {new Date().getFullYear()} Chamidu Herath ICT. All rights reserved.
+            &copy; {new Date().getFullYear()} Chamidu Herath. All rights reserved.
           </p>
           <p className="text-xs text-gray-600">
             <a href="https://www.chamidu.me" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-white transition-colors">

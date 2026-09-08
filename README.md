@@ -1,6 +1,6 @@
-# Chamidu Herath ICT - Giveaway Platform 🚀
+# Chamidu Herath - Giveaway Platform 🚀
 
-A modern, high-performance, mobile-first giveaway platform built for the YouTube channel **Chamidu Herath ICT**. The platform connects YouTube viewers to custom giveaways hosted at custom URLs. The architecture prioritizes security, data privacy, resource efficiency, and a clean, dynamic UI/UX.
+A modern, high-performance, mobile-first giveaway platform built for the YouTube channel **Chamidu Herath**. The platform connects YouTube viewers to custom giveaways hosted at custom URLs. The architecture prioritizes security, data privacy, resource efficiency, and a clean, dynamic UI/UX.
 
 ## 🛠 Tech Stack
 
@@ -77,4 +77,4 @@ Open [http://localhost:3000/admin](http://localhost:3000/admin) to log in to the
 - The admin dashboard is completely isolated from the database for authentication. The only way to access the dashboard is by knowing the exact `ADMIN_USERNAME` and the plaintext password that corresponds to the `ADMIN_PASSWORD_HASH` stored in your environment variables.
 
 ## 📄 License
-This project is proprietary and built specifically for Chamidu Herath ICT. All rights reserved.
+This project is proprietary and built specifically for Chamidu Herath. All rights reserved.

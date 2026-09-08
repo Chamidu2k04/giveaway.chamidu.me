@@ -16,9 +16,19 @@ export async function GET(
       return NextResponse.json({ error: 'Giveaway not found' }, { status: 404 });
     }
 
-    const participantCount = await Participant.countDocuments({ giveawayId: giveaway._id });
+    const participantCount =
+      typeof giveaway.participantCount === "number"
+        ? giveaway.participantCount
+        : await Participant.countDocuments({ giveawayId: giveaway._id });
 
-    return NextResponse.json({ ...giveaway, participantCount });
+    return NextResponse.json(
+      { ...giveaway, participantCount },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=30, stale-while-revalidate=59",
+        },
+      }
+    );
   } catch (error) {
     console.error('[GET /api/giveaways/[slugId]]', error);
     return NextResponse.json({ error: 'Failed to fetch giveaway' }, { status: 500 });

@@ -13,6 +13,7 @@ export interface IGiveaway extends Document {
   youtubeUrl: string;
   youtubeVideoId: string;
   thumbnailUrl: string;
+  participantCount?: number;
   maxParticipants?: number;
   status: 'UPCOMING' | 'ACTIVE' | 'COMPLETED';
   winners: IWinner[];
@@ -39,6 +40,7 @@ const GiveawaySchema = new Schema<IGiveaway>({
   youtubeUrl: { type: String, required: true },
   youtubeVideoId: { type: String, required: true },
   thumbnailUrl: { type: String, required: true },
+  participantCount: { type: Number, default: 0, min: 0 },
   maxParticipants: { type: Number, min: 1 },
   status: {
     type: String,

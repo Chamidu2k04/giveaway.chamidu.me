@@ -1,5 +1,4 @@
 "use client";
-import { useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Youtube } from "@/components/YoutubeIcon";
@@ -39,7 +38,7 @@ export default function ThankYouPage() {
           </h1>
           <p className="text-gray-300 text-base leading-relaxed">
             Your entry has been successfully recorded. Thank you so much for participating in our giveaway
-            and for supporting the <strong className="text-white">Chamidu Herath ICT</strong> community!
+            and for supporting the <strong className="text-white">Chamidu Herath</strong> community!
           </p>
           <p className="text-gray-400 text-sm leading-relaxed">
             Winners will be announced on the YouTube channel. Make sure you&apos;re subscribed so you don&apos;t
@@ -54,7 +53,7 @@ export default function ThankYouPage() {
           transition={{ delay: 0.6 }}
           className="flex justify-center gap-2"
         >
-          {["🇱🇰", "📚", "💻", "❤️", "🎉"].map((emoji, i) => (
+          {["🇱🇰", "📱", "💻", "❤️", "🎉"].map((emoji, i) => (
             <motion.span
               key={i}
               animate={{ y: [0, -8, 0] }}
@@ -104,8 +103,8 @@ export default function ThankYouPage() {
             <span className="text-sm font-semibold">Thank you for supporting our community!</span>
           </div>
           <p className="text-xs text-gray-400 leading-relaxed">
-            Every view, like, comment, and share helps us create more free ICT education content for
-            Sri Lankan students. We truly appreciate your support! 🇱🇰❤️
+            Every view, like, comment, and share helps us create more authentic tech reviews,
+            unboxings, and giveaways for the community. We truly appreciate your support! 🇱🇰❤️
           </p>
         </motion.div>
       </main>
