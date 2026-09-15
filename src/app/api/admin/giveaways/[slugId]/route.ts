@@ -11,6 +11,12 @@ const updateGiveawaySchema = z.object({
   youtubeUrl: z.string().url().optional(),
   maxParticipants: z.number().int().positive().optional().nullable(),
   status: z.enum(['UPCOMING', 'ACTIVE', 'COMPLETED']).optional(),
+  startDate: z.string().optional().nullable().transform((val) => val ? new Date(val) : undefined),
+  endDate: z.string().optional().nullable().transform((val) => val ? new Date(val) : undefined),
+  timeZone: z.string().optional(),
+  prizeDescription: z.string().max(500).optional(),
+  approximateRetailValue: z.string().max(100).optional(),
+  eligibilityCriteria: z.string().max(500).optional(),
 });
 
 async function requireAdmin() {

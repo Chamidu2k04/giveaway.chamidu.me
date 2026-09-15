@@ -37,13 +37,22 @@ export default function PrivacyPage() {
         <div className="mb-8 rounded-2xl border border-yellow-500/30 bg-yellow-500/10 p-5">
           <div className="flex gap-3">
             <AlertTriangle className="h-5 w-5 shrink-0 text-yellow-400 mt-0.5" />
-            <div>
-              <p className="font-bold text-yellow-300 text-sm mb-1">YouTube Disclaimer</p>
-              <p className="text-sm text-yellow-200/80 leading-relaxed">
-                This giveaway is in no way sponsored, endorsed, administered by, or associated with YouTube LLC.
-                By entering any giveaway on this platform, participants acknowledge that YouTube is completely
-                released from all liability related to this contest. All giveaways are independently organized
-                by Chamidu Herath.
+            <div className="space-y-2">
+              <p className="font-bold text-yellow-300 text-sm">YouTube Liability Disclaimer & Contest Policy</p>
+              <p className="text-sm text-yellow-200/90 leading-relaxed">
+                <strong>This contest is not sponsored, endorsed, or administered by, or associated with YouTube.</strong> YouTube is completely released from all liability related to contests and giveaways hosted on this platform.
+              </p>
+              <p className="text-xs text-yellow-300/80 leading-relaxed">
+                All contests operate in accordance with the{" "}
+                <a
+                  href="https://www.youtube.com/howyoutubeworks/policies/community-guidelines/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-white font-medium text-yellow-200"
+                >
+                  YouTube Community Guidelines
+                </a>
+                . Entries failing to comply with YouTube guidelines are disqualified.
               </p>
             </div>
           </div>
@@ -88,11 +97,12 @@ export default function PrivacyPage() {
             </p>
           </Section>
 
-          <Section title="Your Rights" icon={<Eye className="h-5 w-5" />}>
+          <Section title="Your Rights & Content Ownership" icon={<Eye className="h-5 w-5" />}>
             <p>You have the right to:</p>
             <ul className="list-disc list-inside space-y-1 text-gray-400">
               <li>Request access to your personal data</li>
               <li>Request deletion of your entry (before winners are selected)</li>
+              <li>Retain complete intellectual and proprietary ownership of any content or submissions provided during entry</li>
               <li>Contact us with any privacy concerns</li>
             </ul>
           </Section>

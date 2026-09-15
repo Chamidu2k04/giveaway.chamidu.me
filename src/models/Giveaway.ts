@@ -16,6 +16,12 @@ export interface IGiveaway extends Document {
   participantCount?: number;
   maxParticipants?: number;
   status: 'UPCOMING' | 'ACTIVE' | 'COMPLETED';
+  startDate?: Date;
+  endDate?: Date;
+  timeZone?: string;
+  prizeDescription?: string;
+  approximateRetailValue?: string;
+  eligibilityCriteria?: string;
   winners: IWinner[];
   createdAt: Date;
   updatedAt: Date;
@@ -48,6 +54,12 @@ const GiveawaySchema = new Schema<IGiveaway>({
     default: 'UPCOMING',
     index: true,
   },
+  startDate: { type: Date },
+  endDate: { type: Date },
+  timeZone: { type: String, default: 'Asia/Colombo', trim: true },
+  prizeDescription: { type: String, trim: true },
+  approximateRetailValue: { type: String, trim: true },
+  eligibilityCriteria: { type: String, trim: true },
   winners: [WinnerSchema],
 }, {
   timestamps: true,

@@ -168,7 +168,7 @@ export function EntryForm({ slugId }: { slugId: string }) {
       </button>
 
       <p className="text-center text-xs text-gray-500">
-        By entering, you confirm you have subscribed to the channel and agree to the giveaway rules.
+        By entering, you confirm you agree to the Official Contest Rules and Privacy Policy. No purchase necessary.
       </p>
     </form>
   );
