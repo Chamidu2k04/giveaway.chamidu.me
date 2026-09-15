@@ -8,8 +8,9 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { EntryForm } from "@/components/EntryForm";
 import { YouTubeDisclaimer } from "@/components/YouTubeDisclaimer";
+import { OfficialRulesSection } from "@/components/OfficialRulesSection";
 import { ProgressBar } from "@/components/ProgressBar";
-import { Trophy, Users, ExternalLink, CheckCircle2 } from "lucide-react";
+import { Trophy, Users, ExternalLink } from "lucide-react";
 
 export const revalidate = 30;
 
@@ -70,15 +71,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
   };
 }
-
-const rules = [
-  "Must be subscribed to the Chamidu Herath YouTube channel",
-  "One entry per person per giveaway (verified by phone & YouTube handle)",
-  "Must provide a valid Sri Lankan WhatsApp number",
-  "Winners will be announced on the YouTube channel",
-  "Prize delivery will be coordinated via WhatsApp",
-  "This giveaway is open to residents of Sri Lanka only",
-];
 
 export default async function GiveawayEntryPage({ params }: Props) {
   const { slugId } = await params;
@@ -172,18 +164,15 @@ export default async function GiveawayEntryPage({ params }: Props) {
           </div>
         )}
 
-        {/* Rules */}
-        <div className="rounded-2xl border border-white/10 bg-[#1a1a1a] p-5 space-y-3">
-          <h2 className="text-sm font-bold text-gray-200 uppercase tracking-wider">Giveaway Rules</h2>
-          <ul className="space-y-2">
-            {rules.map((rule, i) => (
-              <li key={i} className="flex items-start gap-2.5 text-sm text-gray-300">
-                <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5 text-green-400" />
-                {rule}
-              </li>
-            ))}
-          </ul>
-        </div>
+        {/* Official Contest Rules */}
+        <OfficialRulesSection
+          startDate={giveaway.startDate}
+          endDate={giveaway.endDate}
+          timeZone={giveaway.timeZone}
+          prizeDescription={giveaway.prizeDescription}
+          approximateRetailValue={giveaway.approximateRetailValue}
+          eligibilityCriteria={giveaway.eligibilityCriteria}
+        />
 
         {/* YouTube Disclaimer */}
         <YouTubeDisclaimer />

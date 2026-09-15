@@ -46,8 +46,8 @@ export function Footer() {
               Legal
             </h3>
             <p className="text-xs text-gray-500 leading-relaxed">
-              This giveaway platform is not sponsored, endorsed, or administered by YouTube LLC.
-              YouTube is completely released from all liability related to this contest.
+              This contest is not sponsored, endorsed, or administered by, or associated with YouTube.
+              YouTube is completely released from all liability related to contests on this platform.
             </p>
           </div>
         </div>

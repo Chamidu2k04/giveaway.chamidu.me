@@ -41,8 +41,8 @@ export default function ThankYouPage() {
             and for supporting the <strong className="text-white">Chamidu Herath</strong> community!
           </p>
           <p className="text-gray-400 text-sm leading-relaxed">
-            Winners will be announced on the YouTube channel. Make sure you&apos;re subscribed so you don&apos;t
-            miss the announcement — you could be next! 🌟
+            Winners will be announced on the YouTube channel and contacted directly via WhatsApp.
+            Stay tuned to the channel so you don&apos;t miss the announcement! 🌟
           </p>
         </motion.div>
 

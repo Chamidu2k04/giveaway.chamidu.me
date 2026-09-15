@@ -29,6 +29,11 @@ const schema = z.object({
   youtubeUrl: z.string().url('Must be a valid URL'),
   maxParticipants: z.string().optional(),
   status: z.enum(['UPCOMING', 'ACTIVE', 'COMPLETED']),
+  prizeDescription: z.string().max(500).optional(),
+  approximateRetailValue: z.string().max(100).optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  eligibilityCriteria: z.string().max(500).optional(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -70,6 +75,8 @@ export default function NewGiveawayPage() {
         body: JSON.stringify({
           ...data,
           maxParticipants: data.maxParticipants ? parseInt(data.maxParticipants, 10) : undefined,
+          startDate: data.startDate ? new Date(data.startDate).toISOString() : undefined,
+          endDate: data.endDate ? new Date(data.endDate).toISOString() : undefined,
         }),
       });
       const json = await res.json();
@@ -221,6 +228,73 @@ export default function NewGiveawayPage() {
               <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-4 text-xs text-blue-300 space-y-1">
                 <p className="font-semibold">Auto-extraction</p>
                 <p>The YouTube thumbnail is automatically pulled from the video URL at max resolution (1280×720). No manual upload needed.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* YouTube Contest Compliance & Official Rules */}
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 space-y-4">
+            <div>
+              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                Official Rules & Compliance (YouTube Contest Policy)
+              </h3>
+              <p className="text-xs text-gray-400 mt-1">
+                Disclose transparent prize, eligibility, and timeline details to meet YouTube contest standards.
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-gray-300">Prize Details</label>
+                <input
+                  {...register('prizeDescription')}
+                  type="text"
+                  placeholder="e.g. Sony WH-1000XM5 Headphones"
+                  disabled={isSubmitting}
+                  className={inputClass(!!errors.prizeDescription)}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-gray-300">Approx. Retail Value (ARV)</label>
+                <input
+                  {...register('approximateRetailValue')}
+                  type="text"
+                  placeholder="e.g. LKR 125,000"
+                  disabled={isSubmitting}
+                  className={inputClass(!!errors.approximateRetailValue)}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-gray-300">Start Date & Time</label>
+                <input
+                  {...register('startDate')}
+                  type="datetime-local"
+                  disabled={isSubmitting}
+                  className={inputClass()}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-gray-300">End Date & Time</label>
+                <input
+                  {...register('endDate')}
+                  type="datetime-local"
+                  disabled={isSubmitting}
+                  className={inputClass()}
+                />
+              </div>
+
+              <div className="space-y-1.5 sm:col-span-2">
+                <label className="text-xs font-medium text-gray-300">Eligibility Criteria</label>
+                <input
+                  {...register('eligibilityCriteria')}
+                  type="text"
+                  placeholder="e.g. Residents of Sri Lanka aged 18+ (or with parental consent)"
+                  disabled={isSubmitting}
+                  className={inputClass(!!errors.eligibilityCriteria)}
+                />
               </div>
             </div>
           </div>

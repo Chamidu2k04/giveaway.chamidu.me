@@ -13,6 +13,12 @@ const createGiveawaySchema = z.object({
   youtubeUrl: z.string().url(),
   maxParticipants: z.number().int().positive().optional(),
   status: z.enum(['UPCOMING', 'ACTIVE', 'COMPLETED']).default('UPCOMING'),
+  startDate: z.string().optional().nullable().transform((val) => val ? new Date(val) : undefined),
+  endDate: z.string().optional().nullable().transform((val) => val ? new Date(val) : undefined),
+  timeZone: z.string().optional().default('Asia/Colombo'),
+  prizeDescription: z.string().max(500).optional(),
+  approximateRetailValue: z.string().max(100).optional(),
+  eligibilityCriteria: z.string().max(500).optional(),
 });
 
 async function requireAdmin() {
@@ -68,7 +74,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { slugId, title, description, youtubeUrl, maxParticipants, status } = validation.data;
+    const {
+      slugId,
+      title,
+      description,
+      youtubeUrl,
+      maxParticipants,
+      status,
+      startDate,
+      endDate,
+      timeZone,
+      prizeDescription,
+      approximateRetailValue,
+      eligibilityCriteria,
+    } = validation.data;
 
     const videoId = extractYouTubeVideoId(youtubeUrl);
     if (!videoId) {
@@ -92,6 +111,12 @@ export async function POST(req: NextRequest) {
       thumbnailUrl: getYouTubeThumbnail(videoId),
       maxParticipants,
       status,
+      startDate,
+      endDate,
+      timeZone,
+      prizeDescription,
+      approximateRetailValue,
+      eligibilityCriteria,
       winners: [],
     });
 
